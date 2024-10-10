@@ -129,10 +129,10 @@ int main() {
 
     fprintf(stderr,"Polling every %d seconds\n", POLL_INTERVAL);
 
-    int first = 0;
+    int first = 1;
     for(;;){
-	if (!first) sleep(POLL_INTERVAL);
-        first = 1; // so we start polling immediately
+	if (first==0) sleep(POLL_INTERVAL);
+        first = 0; // so we start polling immediately
 
 	uint16_t *cell_mv = (uint16_t*)malloc(sizeof(uint16_t) * n_cells);
         if(modbus_read_registers(ctx, 0x1200, n_cells, cell_mv) < 0){
