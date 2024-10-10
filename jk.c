@@ -85,6 +85,8 @@ int main() {
 
     uint32_t n_cells = (cell_count[0]<<16) | cell_count[1];
     fprintf(stderr, "Device has %d cells\n", n_cells);
+
+    usleep(BMS_REQ_DELAY); // to keep the BMS happy
     //
 
     mosquitto_lib_init();
@@ -144,7 +146,7 @@ int main() {
 
 	free(cell_mv);
 
-	usleep(50000);
+	usleep(BMS_REQ_DELAY);
 	uint16_t inb;
 	if (modbus_read_registers(ctx, 0x1246, 1, &inb) < 0) {
 		perror("modbus_read_regs");
@@ -153,7 +155,7 @@ int main() {
 
 	PUBLISH_VALUE("battery", "battery vdiff_max=%.3f", inb/1000.f);
 
-	usleep(50000);
+	usleep(BMS_REQ_DELAY);
 	uint16_t temps[2];
 	if (modbus_read_registers(ctx, 0x129C, 2, temps) < 0) {
 		perror("modbus_read_regs");
@@ -170,7 +172,7 @@ int main() {
                 return -1;
         }*/
 
-	usleep(50000);
+	usleep(BMS_REQ_DELAY);
 	uint16_t bat_info[6];
 	if (modbus_read_registers(ctx, 0x1290, 6, bat_info) < 0) {
 		perror("modbus_read_regs");
@@ -185,7 +187,7 @@ int main() {
 	PUBLISH_VALUE("battery", "battery bat_power=%.3f", bat_power);
 	PUBLISH_VALUE("battery", "battery bat_current=%.3f", bat_current);
 
-	usleep(50000);
+	usleep(BMS_REQ_DELAY);
 	int16_t bal_current;
 	if (modbus_read_registers(ctx, 0x12A4, 1, &bal_current) < 0) {
 		perror("modbus_read_regs");
@@ -194,7 +196,7 @@ int main() {
 
 	PUBLISH_VALUE("battery", "battery bal_current=%.3f", bal_current/1000.f);
 
-	usleep(50000);
+	usleep(BMS_REQ_DELAY);
 	uint16_t bal_state;
 	if (modbus_read_registers(ctx, 0x12A6, 1, &bal_state) < 0) {
 		perror("modbus_read_regs");
