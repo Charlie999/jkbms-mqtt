@@ -138,7 +138,7 @@ int main() {
         if(modbus_read_registers(ctx, 0x1200, n_cells, cell_mv) < 0){
 		free(cell_mv);
         	perror("modbus_read_regs");
-        	continue;
+        	return -1;
         }
 
 	for (int i=0;i<n_cells;i++)
@@ -150,7 +150,7 @@ int main() {
 	uint16_t inb;
 	if (modbus_read_registers(ctx, 0x1246, 1, &inb) < 0) {
 		perror("modbus_read_regs");
-		continue;
+		return -1;
 	}
 
 	PUBLISH_VALUE("battery", "battery vdiff_max=%.3f", inb/1000.f);
@@ -159,7 +159,7 @@ int main() {
 	uint16_t temps[2];
 	if (modbus_read_registers(ctx, 0x129C, 2, temps) < 0) {
 		perror("modbus_read_regs");
-		continue;
+		return -1;
 	}
 
 	PUBLISH_VALUE("battery", "battery temp0=%.1f", temps[0]/10.0f);
@@ -176,7 +176,7 @@ int main() {
 	uint16_t bat_info[6];
 	if (modbus_read_registers(ctx, 0x1290, 6, bat_info) < 0) {
 		perror("modbus_read_regs");
-		continue;
+		return -1;
 	}
 
 	float bat_voltage = ((bat_info[0]<<16) + bat_info[1])/1000.0;
@@ -191,7 +191,7 @@ int main() {
 	int16_t bal_current;
 	if (modbus_read_registers(ctx, 0x12A4, 1, &bal_current) < 0) {
 		perror("modbus_read_regs");
-		continue;
+		return -1;
 	}
 
 	PUBLISH_VALUE("battery", "battery bal_current=%.3f", bal_current/1000.f);
@@ -200,7 +200,7 @@ int main() {
 	uint16_t bal_state;
 	if (modbus_read_registers(ctx, 0x12A6, 1, &bal_state) < 0) {
 		perror("modbus_read_regs");
-		continue;
+		return -1;
 	}
 
 	PUBLISH_VALUE("battery", "battery bal_state=%hhu", (bal_state&0xFF00)>>8);
