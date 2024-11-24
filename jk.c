@@ -12,6 +12,14 @@
 
 #include "config.h"
 
+#define VERSION_STR "1.0"
+#if defined(GIT_BRANCH) && defined(GIT_VERSION)
+#undef VERSION_STR
+#define xstr(s) str(s)
+#define str(s) #s
+#define VERSION_STR "git-" xstr(GIT_BRANCH) "_" xstr(GIT_VERSION)
+#endif
+
 #define PUBLISH_VALUE(topic, fmtstr, ...) { char* payload; asprintf(&payload, fmtstr, __VA_ARGS__); \
         mosq_rc = mosquitto_publish(mosq, NULL, topic, strlen(payload), payload, 2, false);\
         if(mosq_rc != MOSQ_ERR_SUCCESS){ \
@@ -28,7 +36,7 @@ int main() {
     int ret;
     modbus_t *ctx;
 
-    fprintf(stderr, "JK BMS Poller, (C) Charlie Camilleri, Oct '24\n");
+    fprintf(stderr, "JK BMS Poller %s, (C) Charlie Camilleri, Oct '24\n", VERSION_STR);
 
     struct mosquitto *mosq;
 
